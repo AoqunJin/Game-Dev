@@ -1,6 +1,6 @@
 import pygame
 
-from controller import Moveable, Vector2
+from controller import Moveable
 
 # 初始化Pygame
 pygame.init()
@@ -21,8 +21,8 @@ block_height = 50
 block_speed_x = 0
 block_speed_y = 0
 
-moveable = Moveable(init_speed=Vector2(block_speed_x, block_speed_y))
-moveable.set_acceleration_y(0.5)
+moveable = Moveable()
+
 # 游戏循环
 running = True
 while running:
@@ -33,31 +33,28 @@ while running:
         # 处理键盘事件
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                moveable.set_acceleration_x(-0.2)
-                moveable.add_speed_x(-0.2)
+                moveable.move(axis="x", sign=-1)
 
             elif event.key == pygame.K_RIGHT:
-                moveable.set_acceleration_x(0.2)
-                moveable.add_speed_x(0.2)
+                moveable.move(axis="x", sign=1)
   
             elif event.key == pygame.K_UP:
-                moveable.set_acceleration_y(-0.2)
-                moveable.add_speed_y(-1)
+                moveable.move(axis="y", sign=-1)
+                moveable.cancel_move(axis="y")
 
             elif event.key == pygame.K_DOWN:
-                moveable.set_acceleration_y(0.2)
-                moveable.add_speed_y(0.2)
+                moveable.move(axis="y", sign=1)
 
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                moveable.set_acceleration_x(0)
+                moveable.cancel_move(axis="x")
 
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                moveable.set_acceleration_y(0.5)
+                moveable.cancel_move(axis="y")
 
 
     # 移动方块
-    x, y = moveable.update(0.1)
+    x, y = moveable.step(0.1)
     block_x += x
     block_y += y
 
